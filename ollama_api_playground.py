@@ -133,8 +133,11 @@ class OllamaConfiguration:
         return response
 
 
-config = OllamaConfiguration(model="mistral", temperature=0.7, stream=False)
+config = OllamaConfiguration(
+    system="You are a general purpose thinking machine that can read text , reason it and then give out a strcutured response",
+    model="openhermes2.5-mistral", temperature=0.4, stream=False, top_k=10, format="json")
 
-prompt = "Write me a mail addressing the principal of the college calling in sick"
+prompt = "For the question 'A stock went down 30% over the night , how would you react to it' a user responded with 'Man, thats actually scary I cannot see that much of a swing\
+    in values' . Classify this user's risk_tolerance as 'high' 'medium' or 'low' in a json format"
 
 print(json.loads(config.generate_response(prompt=prompt).text)["response"])
