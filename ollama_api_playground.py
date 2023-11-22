@@ -82,6 +82,13 @@ class OllamaConfiguration:
     raw: Optional[bool] = None
     """If `true` no formatting will be applied to the prompt and no context will be returned."""
 
+    @staticmethod
+    def remove_none_values(d):
+        if isinstance(d, dict):
+            return {k: OllamaConfiguration.remove_none_values(v) for k, v in d.items() if v is not None}
+        else:
+            return d
+
     def to_json(self):
 
         data = {
@@ -113,8 +120,8 @@ class OllamaConfiguration:
             "raw": self.raw
         }
 
-        return json.dumps(data)
+        return json.dumps(OllamaConfiguration.remove_none_values(data))
 
 
-config = OllamaConfiguration()
+config = OllamaConfiguration(temperature=0.7)
 print(config.to_json())
