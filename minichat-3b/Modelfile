@@ -1,0 +1,37 @@
+FROM minichat-3b.q4_k_m.gguf
+
+
+# # Example 1 | ollama show --modelfile mistral
+# TEMPLATE """[INST] {{ .System }} {{ .Prompt }} [/INST]
+# """
+# PARAMETER stop "[INST]"
+# PARAMETER stop "[/INST]"
+# PARAMETER stop "<<SYS>>"
+# PARAMETER stop "<</SYS>>"
+
+# Example 2 | ollama show --modelfile zephyr
+TEMPLATE """{{- if .System }}
+<|system|>
+{{ .System }}
+</s>
+{{- end }}
+<|user|>
+{{ .Prompt }}
+</s>
+<|assistant|>
+"""
+PARAMETER stop "<|system|>"
+PARAMETER stop "<|user|>"
+PARAMETER stop "<|assistant|>"
+PARAMETER stop "</s>"
+
+# # Example 3 | ollama show --modelfile openhermes2.5-mistral
+# TEMPLATE """<|im_start|>system
+# {{ .System }}<|im_end|>
+# <|im_start|>user
+# {{ .Prompt }}<|im_end|>
+# <|im_start|>assistant
+# """
+# PARAMETER num_ctx 4096
+# PARAMETER stop "<|im_start|>"
+# PARAMETER stop "<|im_end|>"
