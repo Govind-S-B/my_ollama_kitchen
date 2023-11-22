@@ -1,8 +1,10 @@
+import json
+from dataclasses import dataclass
 from typing import Optional
-from pydantic import BaseModel
 
 
-class ModelConfiguration(BaseModel):
+@dataclass
+class OllamaConfiguration:
     """Model configuration class."""
 
     base_url: str = "http://localhost:11434"
@@ -12,7 +14,7 @@ class ModelConfiguration(BaseModel):
     """The model name."""
 
     prompt: str = "Hi"
-    """The model name."""
+    """The user prompt."""
 
     format: Optional[str] = None
     """The format to return a response in. Currently the only accepted value is `json`."""
@@ -79,3 +81,40 @@ class ModelConfiguration(BaseModel):
 
     raw: Optional[bool] = None
     """If `true` no formatting will be applied to the prompt and no context will be returned."""
+
+    def to_json(self):
+
+        data = {
+            "model": self.model,
+            "prompt": self.prompt,
+            "format": self.format,
+            "options": {
+                "mirostat": self.mirostat,
+                "mirostat_eta": self.mirostat_eta,
+                "mirostat_tau": self.mirostat_tau,
+                "num_ctx": self.num_ctx,
+                "num_gqa": self.num_gqa,
+                "num_gpu": self.num_gpu,
+                "num_thread": self.num_thread,
+                "repeat_last_n": self.repeat_last_n,
+                "repeat_penalty": self.repeat_penalty,
+                "temperature": self.temperature,
+                "seed": self.seed,
+                "stop": self.stop,
+                "tfs_z": self.tfs_z,
+                "num_predict": self.num_predict,
+                "top_k": self.top_k,
+                "top_p": self.top_p,
+            },
+            "system": self.system,
+            "template": self.template,
+            "context": self.context,
+            "stream": self.stream,
+            "raw": self.raw
+        }
+
+        return json.dumps(data)
+
+
+config = OllamaConfiguration()
+print(config.to_json())
