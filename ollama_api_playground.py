@@ -1,6 +1,7 @@
 import json
 from dataclasses import dataclass
 from typing import Optional
+import requests
 
 
 @dataclass
@@ -93,7 +94,6 @@ class OllamaConfiguration:
 
         data = {
             "model": self.model,
-            "prompt": self.prompt,
             "format": self.format,
             "options": {
                 "mirostat": self.mirostat,
@@ -120,8 +120,21 @@ class OllamaConfiguration:
             "raw": self.raw
         }
 
-        return json.dumps(OllamaConfiguration.remove_none_values(data))
+        return OllamaConfiguration.remove_none_values(data)
+
+    def generate_response(self, prompt):
+        response = requests.post(
+            url=f"{self.base_url}/api/generate/",
+            headers={"Content-Type": "application/json"},
+            json={"prompt": prompt, **self.to_json()},
+            stream=True,
+        )
+
+        return response
 
 
-config = OllamaConfiguration(temperature=0.7)
-print(config.to_json())
+config = OllamaConfiguration(model="mistral", temperature=0.7, stream=False)
+
+prompt = "Write me a mail addressing the principal of the college calling in sick"
+
+print(json.loads(config.generate_response(prompt=prompt).text)["response"])
