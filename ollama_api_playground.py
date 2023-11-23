@@ -90,52 +90,55 @@ class OllamaConfiguration:
         else:
             return d
 
-    def to_json(self):
+    def to_json(self, model=None, prompt=None, format=None, mirostat=None, mirostat_eta=None, mirostat_tau=None, num_ctx=None, num_gqa=None, num_gpu=None, num_thread=None, repeat_last_n=None, repeat_penalty=None,
+                temperature=None, seed=None, stop=None, tfs_z=None, num_predict=None, top_k=None, top_p=None, system=None, template=None, context=None, stream=None, raw=None):
 
         data = {
-            "model": self.model,
-            "format": self.format,
+            "model": model if model is not None else self.model,
+            "prompt": prompt if prompt is not None else self.prompt,
+            "format": format if format is not None else self.format,
             "options": {
-                "mirostat": self.mirostat,
-                "mirostat_eta": self.mirostat_eta,
-                "mirostat_tau": self.mirostat_tau,
-                "num_ctx": self.num_ctx,
-                "num_gqa": self.num_gqa,
-                "num_gpu": self.num_gpu,
-                "num_thread": self.num_thread,
-                "repeat_last_n": self.repeat_last_n,
-                "repeat_penalty": self.repeat_penalty,
-                "temperature": self.temperature,
-                "seed": self.seed,
-                "stop": self.stop,
-                "tfs_z": self.tfs_z,
-                "num_predict": self.num_predict,
-                "top_k": self.top_k,
-                "top_p": self.top_p,
+                "mirostat": mirostat if mirostat is not None else self.mirostat,
+                "mirostat_eta": mirostat_eta if mirostat_eta is not None else self.mirostat_eta,
+                "mirostat_tau": mirostat_tau if mirostat_tau is not None else self.mirostat_tau,
+                "num_ctx": num_ctx if num_ctx is not None else self.num_ctx,
+                "num_gqa": num_gqa if num_gqa is not None else self.num_gqa,
+                "num_gpu": num_gpu if num_gpu is not None else self.num_gpu,
+                "num_thread": num_thread if num_thread is not None else self.num_thread,
+                "repeat_last_n": repeat_last_n if repeat_last_n is not None else self.repeat_last_n,
+                "repeat_penalty": repeat_penalty if repeat_penalty is not None else self.repeat_penalty,
+                "temperature": temperature if temperature is not None else self.temperature,
+                "seed": seed if seed is not None else self.seed,
+                "stop": stop if stop is not None else self.stop,
+                "tfs_z": tfs_z if tfs_z is not None else self.tfs_z,
+                "num_predict": num_predict if num_predict is not None else self.num_predict,
+                "top_k": top_k if top_k is not None else self.top_k,
+                "top_p": top_p if top_p is not None else self.top_p,
             },
-            "system": self.system,
-            "template": self.template,
-            "context": self.context,
-            "stream": self.stream,
-            "raw": self.raw
+            "system": system if system is not None else self.system,
+            "template": template if template is not None else self.template,
+            "context": context if context is not None else self.context,
+            "stream": stream if stream is not None else self.stream,
+            "raw": raw if raw is not None else self.raw
         }
 
         return OllamaConfiguration.remove_none_values(data)
 
-    def generate_response(self, prompt):
+    def generate_response(self, model=None, prompt=None, format=None, mirostat=None, mirostat_eta=None, mirostat_tau=None, num_ctx=None, num_gqa=None, num_gpu=None, num_thread=None, repeat_last_n=None, repeat_penalty=None, temperature=None,
+                          seed=None, stop=None, tfs_z=None, num_predict=None, top_k=None, top_p=None, system=None, template=None, context=None, stream=None, raw=None):
         response = requests.post(
             url=f"{self.base_url}/api/generate/",
             headers={"Content-Type": "application/json"},
-            json={"prompt": prompt, **self.to_json()},
+            json=self.to_json(model=model, prompt=prompt, format=format, mirostat=mirostat, mirostat_eta=mirostat_eta, mirostat_tau=mirostat_tau, num_ctx=num_ctx, num_gqa=num_gqa, num_gpu=num_gpu, num_thread=num_thread, repeat_last_n=repeat_last_n,
+                              repeat_penalty=repeat_penalty, temperature=temperature, seed=seed, stop=stop, tfs_z=tfs_z, num_predict=num_predict, top_k=top_k, top_p=top_p, system=system, template=template, context=context, stream=stream, raw=raw),
             stream=True,
         )
 
         return response
 
 
-config = OllamaConfiguration(
-    system="You are a general purpose thinking machine that can read text , reason it and then give out a strcutured response",
-    model="openhermes2.5-mistral", temperature=0.4, stream=False, top_k=10, format="json")
+config = OllamaConfiguration(model="openhermes2.5-mistral",
+                             temperature=0.4, stream=False, top_k=10, format="json")
 
 prompt = "For the question 'A stock went down 30% over the night , how would you react to it' a user responded with 'Man, thats actually scary I cannot see that much of a swing\
     in values' . Classify this user's risk_tolerance as 'high' 'medium' or 'low' in a json format"
