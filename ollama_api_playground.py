@@ -143,4 +143,5 @@ config = OllamaConfiguration(model="openhermes2.5-mistral",
 prompt = "For the question 'A stock went down 30% over the night , how would you react to it' a user responded with 'Man, thats actually scary I cannot see that much of a swing\
     in values' . Classify this user's risk_tolerance as 'high' 'medium' or 'low' in a json format"
 
-print(json.loads(config.generate_response(prompt=prompt).text)["response"])
+print(json.loads(config.generate_response(
+    prompt=prompt, temperature=0).text)["response"])
